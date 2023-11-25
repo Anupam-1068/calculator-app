@@ -1,3 +1,8 @@
+import 'package:calculator_app/controllers/converter_controller.dart';
+import 'package:calculator_app/model/converter_model.dart';
+import 'package:calculator_app/screens/converter_screen.dart';
+import 'package:calculator_app/service/converter_service.dart';
+import 'package:calculator_app/widgets/history_display.dart';
 import 'package:flutter/material.dart';
 import 'history_screen.dart';
 import 'package:calculator_app/controllers/calculator_controller.dart';
@@ -9,6 +14,7 @@ class CalculatorScreen extends StatefulWidget {
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
   final CalculatorController _controller = CalculatorController();
+  final ConverterController converterController = ConverterController(model: ConverterModel(), service: ConverterService());
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +29,18 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => HistoryScreen(controller: _controller),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.swap_horiz), // Icon for the converter screen
+            onPressed: () {
+              // Navigate to the converter screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConverterScreen(controller: converterController),
                 ),
               );
             },
@@ -98,52 +116,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       child: Text(
         buttonText,
         style: TextStyle(fontSize: 20.0),
-      ),
-    );
-  }
-}
-
-
-
-class HistoryDisplay extends StatelessWidget {
-  final CalculatorController controller;
-
-  HistoryDisplay({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      alignment: Alignment.centerRight,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            controller.getDisplay(),
-            style: TextStyle(fontSize: 24.0),
-          ),
-          FutureBuilder<double>(
-            future: controller.calculateResult(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text(
-                  'Calculating...',
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                );
-              } else if (snapshot.hasError) {
-                return Text(
-                  'Error: ${snapshot.error}',
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                );
-              } else {
-                return Text(
-                  ' = ${snapshot.data}',
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                );
-              }
-            },
-          ),
-        ],
       ),
     );
   }
