@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "420974997645",
+    "project_id": "calculator-app-cc4e7",
+    "storage_bucket": "calculator-app-cc4e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420974997645:android:6729d9ecff18013d3df2c4",
+        "android_client_info": {
+          "package_name": "ee.mainor.calculator_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJORuLKd_yTOytctZmG5zuHLB0cTIbvbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

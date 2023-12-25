@@ -37,7 +37,7 @@ class CalculatorService {
     }
 
     // Return NaN for other error cases
-    return double.nan;
+    return 0;
   }
 
   String getCalculationString() {
@@ -48,7 +48,5 @@ class CalculatorService {
   void clear() {
     _input = '';
   }
-
-
 }
 

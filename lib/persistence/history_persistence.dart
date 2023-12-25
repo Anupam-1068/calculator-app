@@ -1,43 +1,44 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HistoryPersistence {
-  late Database _database;
+  late FirebaseFirestore _firestore;
 
   Future<void> initDatabase() async {
-    _database = await openDatabase(
-      join(await getDatabasesPath(), 'calculator_history.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          'CREATE TABLE history(id INTEGER PRIMARY KEY AUTOINCREMENT, calculation TEXT, timestamp TEXT)',
-        );
-      },
-      version: 1,
-    );
+    _firestore = FirebaseFirestore.instance;
   }
 
   Future<void> addToHistory(String calculation) async {
     await initDatabase();
-    await _database.insert(
-      'history',
-      {'calculation': calculation, 'timestamp': DateTime.now().toString()},
-    );
+
+    // Save to Firestore
+    await _firestore.collection('calculator_history').add({
+      'calculation': calculation,
+      'timestamp': DateTime.now(),
+    });
   }
 
   Future<List<String>> getHistory() async {
     await initDatabase();
-    final List<Map<String, dynamic>> historyList = await _database.query('history');
 
-    return historyList.map((map) {
-      final String calculation = map['calculation'];
-      final String timestamp = map['timestamp'];
-      return '$calculation - $timestamp';
+    // Retrieve history from Firestore
+    QuerySnapshot firestoreHistory = await _firestore.collection('calculator_history').get();
+    List<String> cloudHistory = firestoreHistory.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return '${data['calculation']} - ${data['timestamp']}';
     }).toList();
+
+    // Return the history from Firestore
+    return cloudHistory;
   }
 
   // Method to clear history
   void clear() async {
     await initDatabase();
-    await _database.delete('history');
+
+    // Clear history in Firestore
+    QuerySnapshot firestoreHistory = await _firestore.collection('calculator_history').get();
+    for (QueryDocumentSnapshot doc in firestoreHistory.docs) {
+      await doc.reference.delete();
+    }
   }
 }

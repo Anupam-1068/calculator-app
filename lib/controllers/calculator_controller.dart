@@ -7,16 +7,21 @@ class CalculatorController {
   String _display = '';
 
   // Method to handle button presses
-  void onButtonPressed(String buttonText) {
-    _calculatorService.updateInput(buttonText);
-    // You can update the UI or perform additional logic here
-  }
+ void onButtonPressed(String buttonText) {
+  _calculatorService.updateInput(buttonText);
+  _display = _calculatorService.getCalculationString();
+  // You can update the UI or perform additional logic here
+}
 
-  // Method to calculate and return the result
-  Future<double> calculateResult() async {
+
+  // Method to handle the equals button
+  Future<void> onEqualsPressed() async {
     double result = _calculatorService.calculate();
-    await _historyPersistence.addToHistory(_calculatorService.getCalculationString());
-    return result;
+    String calculationString = _calculatorService.getCalculationString();
+
+    // Save to Firestore
+    await _historyPersistence.addToHistory(calculationString);
+    _calculatorService.clear();
   }
 
   // Method to get the calculation history
@@ -25,15 +30,18 @@ class CalculatorController {
     return historyList;
   }
 
-  // Getter method for the display
   String getDisplay() {
     return _display;
   }
 
-  // Method to clear input and calculation history
   void clear() {
     _calculatorService.clear();
-    _historyPersistence.clear();
+  }
+
+   // Method to calculate and return the result
+  Future<double> calculateResult() async {
+    double result = _calculatorService.calculate();
+    await _historyPersistence.addToHistory(_calculatorService.getCalculationString());
+    return result;
   }
 }
-
